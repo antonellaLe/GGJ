@@ -8,6 +8,7 @@ class Juego {
 
         document.body.appendChild(this.app.view);
         this.agregarFondo();
+        this.agregarUI();
         this.agregarCursor();
 
         this.particleContainer = new PIXI.Container();
@@ -21,17 +22,6 @@ class Juego {
 
         this.contador = new Contador(this.app)
 
-        //Prueba 
-        const texture = PIXI.Texture.from('./assets/005.png');
-        const sprite = new PIXI.Sprite(texture);
-
-        sprite.x = 50;
-        sprite.y = 60;
-        sprite.scale.set(0.05);
-        sprite.anchor.set(0.5);
-
-        this.app.stage.addChild(sprite);
-        //
 
         // Burbujas
         //Cambiar a que se generen x
@@ -66,6 +56,28 @@ class Juego {
 
     agregarCursor() {
 
+    }
+    agregarUI(){
+          //Prueba 
+          const texture = PIXI.Texture.from('./assets/componentes/f2.png');
+          const sprite = new PIXI.Sprite(texture);
+  
+          sprite.x = 80;
+          sprite.y = 60;
+          sprite.scale.set(0.1);
+          sprite.anchor.set(0.5);
+
+          this.app.stage.addChild(sprite);
+          //
+          const textureT = PIXI.Texture.from('./assets/componentes/f5.png');
+          const timer = new PIXI.Sprite(textureT);
+  
+          timer.x = 400;
+          timer.y = 60;
+          timer.scale.set(0.8);
+          timer.anchor.set(0.5);
+  
+          this.app.stage.addChild(timer);
     }
 
 
@@ -173,8 +185,6 @@ class Burbuja {
             anim.destroy();
         };
 
-
-        // Agregar la animación al stage
         this.container.addChild(anim);
     }
 
@@ -200,6 +210,7 @@ class Burbuja {
 
 
         // Agregar al contenedor
+        bubble.zIndex = 10;
         this.container.addChild(bubble);
         this.bubbles.push(bubble); // Agregar la burbuja al array de burbujas
 
@@ -271,13 +282,13 @@ class Cronometro {
     crearTexto() {
         this.texto = new PIXI.Text(`01:00`, {
             fontFamily: 'Arial',
-            fontSize: 36,
-            fill: 0xffffff,
+            fontSize: 30,
+            fill:  0x00CED1,
             align: 'center',
         });
         this.texto.anchor.set(0.5);
         this.texto.x = this.app.renderer.width / 2;
-        this.texto.y = 50;
+        this.texto.y = 70;
         this.app.stage.addChild(this.texto);
     }
 
@@ -288,7 +299,7 @@ class Cronometro {
             const segundos = Math.floor(this.tiempoRestante % 60);
             this.texto.text = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
         } else {
-            this.texto.text = "¡Termino el tiempo!";
+            this.texto.text = "¡ Tiempo!";
         }
     }
 
@@ -309,12 +320,12 @@ class Contador {
         this.texto = new PIXI.Text(this.puntaje.toString(), {
             fontFamily: 'Arial',
             fontSize: 32,
-            fill: 0xffffff, // blanco
+            fill: 0x00CED1, // blanco
             align: 'center',
         });
         this.texto.anchor.set(0.5);
-        this.texto.x = 120;
-        this.texto.y = 50;
+        this.texto.x = 80;
+        this.texto.y = 60;
         this.app.stage.addChild(this.texto);
     }
 
