@@ -8,6 +8,7 @@ class Juego {
 
         document.body.appendChild(this.app.view);
         this.agregarFondo();
+        this.agregarCursor();
 
         this.particleContainer = new PIXI.Container();
         this.app.stage.addChild(this.particleContainer);
@@ -62,6 +63,11 @@ this.app.stage.addChild(sprite);
         this.contenedorFondo.addChild(this.fondoSprite);
         this.app.stage.addChild(this.contenedorFondo);
     }
+
+    agregarCursor() {
+
+    }
+
 
 
 }
@@ -321,3 +327,4 @@ class Player { //Puntos- mouse- etc
 
 // Crear una instancia del juego
 const juego = new Juego();
+
