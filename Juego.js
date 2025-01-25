@@ -21,17 +21,17 @@ class Juego {
 
         this.contador = new Contador(this.app)
 
-//Prueba 
-const texture = PIXI.Texture.from('./assets/005.png'); 
-const sprite = new PIXI.Sprite(texture);
+        //Prueba 
+        const texture = PIXI.Texture.from('./assets/005.png');
+        const sprite = new PIXI.Sprite(texture);
 
-sprite.x = 50;  
-sprite.y = 60; 
-sprite.scale.set(0.05);
-sprite.anchor.set(0.5); 
+        sprite.x = 50;
+        sprite.y = 60;
+        sprite.scale.set(0.05);
+        sprite.anchor.set(0.5);
 
-this.app.stage.addChild(sprite);
-//
+        this.app.stage.addChild(sprite);
+        //
 
         // Burbujas
         //Cambiar a que se generen x
@@ -91,89 +91,92 @@ class Burbuja {
         this.createBubble(x, y, color);
     }
 
-        async animacion(bubble) {
-    
-            const atlasData = {
-                frames: {
-                    b1: {
-                        frame: {x: 0, y: 0, w: 128, h: 128},
-                        sourceSize: {w: 128, h: 128},
-                        spriteSourceSize: {x: 0, y: 0, w: 128, h: 128}
-                    },
-                    b2: {
-                        frame: {x: 128, y: 0, w: 128, h: 128},
-                        sourceSize: {w: 128, h: 128},
-                        spriteSourceSize: {x: 0, y: 0, w: 128, h: 128}
-                    },
-                    b3: {
-                        frame: {x: 256, y: 0, w: 128, h: 128},
-                        sourceSize: {w: 128, h: 128},
-                        spriteSourceSize: {x: 0, y: 0, w: 128, h: 128}
-                    },
-                    b4: {
-                        frame: {x: 384, y: 0, w: 128, h: 128},
-                        sourceSize: {w: 128, h: 128},
-                        spriteSourceSize: {x: 0, y: 0, w: 128, h: 128}
-                    },
-                    b5: {
-                        frame: {x: 512, y: 0, w: 128, h: 128},
-                        sourceSize: {w: 128, h: 128},
-                        spriteSourceSize: {x: 0, y: 0, w: 128, h: 128}
-                    },
-                    b6: {
-                        frame: {x: 640, y: 0, w: 128, h: 128},
-                        sourceSize: {w: 128, h: 128},
-                        spriteSourceSize: {x: 0, y: 0, w: 128, h: 128}
-                    },
-                    b7: {
-                        frame: {x: 768, y: 0, w: 128, h: 128},
-                        sourceSize: {w: 128, h: 128},
-                        spriteSourceSize: {x: 0, y: 0, w: 128, h: 128}
-                    }
-                },                           
-                
-                meta: {
-                    image: './assets/explosion.png',
-                    format: 'RGBA8888',
-                    size: {w: 896, h: 198},
-                    scale: 1
+    async animacion(bubble) {
+
+        const atlasData = {
+            frames: {
+                b1: {
+                    frame: { x: 0, y: 0, w: 128, h: 128 },
+                    sourceSize: { w: 128, h: 128 },
+                    spriteSourceSize: { x: 0, y: 0, w: 128, h: 128 }
                 },
-                animations: {
-                    burbujaA: ['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7']
+                b2: {
+                    frame: { x: 128, y: 0, w: 128, h: 128 },
+                    sourceSize: { w: 128, h: 128 },
+                    spriteSourceSize: { x: 0, y: 0, w: 128, h: 128 }
+                },
+                b3: {
+                    frame: { x: 256, y: 0, w: 128, h: 128 },
+                    sourceSize: { w: 128, h: 128 },
+                    spriteSourceSize: { x: 0, y: 0, w: 128, h: 128 }
+                },
+                b4: {
+                    frame: { x: 384, y: 0, w: 128, h: 128 },
+                    sourceSize: { w: 128, h: 128 },
+                    spriteSourceSize: { x: 0, y: 0, w: 128, h: 128 }
+                },
+                b5: {
+                    frame: { x: 512, y: 0, w: 128, h: 128 },
+                    sourceSize: { w: 128, h: 128 },
+                    spriteSourceSize: { x: 0, y: 0, w: 128, h: 128 }
+                },
+                b6: {
+                    frame: { x: 640, y: 0, w: 128, h: 128 },
+                    sourceSize: { w: 128, h: 128 },
+                    spriteSourceSize: { x: 0, y: 0, w: 128, h: 128 }
+                },
+                b7: {
+                    frame: { x: 768, y: 0, w: 128, h: 128 },
+                    sourceSize: { w: 128, h: 128 },
+                    spriteSourceSize: { x: 0, y: 0, w: 128, h: 128 }
                 }
-            };
-        
-            const spritesheet = new PIXI.Spritesheet(
-                PIXI.Texture.from(atlasData.meta.image),
-                atlasData
-            );
-        
-            await new Promise((resolve) => spritesheet.parse(resolve));
-        
-            const anim = new PIXI.AnimatedSprite(spritesheet.animations.burbujaA);
-        
-    
-            anim.animationSpeed = 0.1; 
-            anim.loop = false; 
-            
-            
-            const globalPosition = bubble.getGlobalPosition();
-    
-             
-            anim.x = globalPosition.x - bubble.width / 2; 
-            anim.y = globalPosition.y - bubble.height / 2;
-    
-            anim.play();
-    
-            anim.onComplete = () => {
-                this.container.removeChild(anim);
-                anim.destroy();
-            };
-            
-        
-            // Agregar la animación al stage
-            this.container.addChild(anim);
-        }
+            },
+
+            meta: {
+                image: './assets/explosion.png',
+                format: 'RGBA8888',
+                size: { w: 896, h: 198 },
+                scale: 1
+            },
+            animations: {
+                burbujaA: ['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7']
+            }
+        };
+
+        const spritesheet = new PIXI.Spritesheet(
+            PIXI.Texture.from(atlasData.meta.image),
+            atlasData
+        );
+
+        await new Promise((resolve) => spritesheet.parse(resolve));
+
+        const anim = new PIXI.AnimatedSprite(spritesheet.animations.burbujaA);
+
+
+        anim.animationSpeed = 0.6;
+        anim.loop = false;
+
+
+        const globalPosition = bubble.getGlobalPosition();
+
+
+        anim.x = globalPosition.x - bubble.width / 2;
+        anim.y = globalPosition.y - bubble.height / 2;
+
+        anim.scale = bubble.scale;
+        anim.alpha = bubble.alpha;
+
+        anim.play();
+
+        anim.onComplete = () => {
+            this.container.removeChild(anim);
+            anim.destroy();
+        };
+
+
+        // Agregar la animación al stage
+        this.container.addChild(anim);
+    }
 
     createBubble(x, y, color) {
         const bubble = new PIXI.Sprite(this.bubbleTexture);
