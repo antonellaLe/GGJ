@@ -1,3 +1,5 @@
+
+
 class Juego {
     constructor() {
         this.app = new PIXI.Application({
@@ -12,6 +14,8 @@ class Juego {
 
         this.particleContainer = new PIXI.Container();
         this.app.stage.addChild(this.particleContainer);
+
+        this.sonido = new Audio('./assets/pulse_sound.mp3');
 
         this.agregarCursor();
         this.agregarUI();
@@ -30,9 +34,9 @@ class Juego {
         for (let i = 0; i < 50; i++) {
             const x = Math.random() * 800;
             const y = Math.random() * 600;
-            const burbuja = new Burbuja(0x0000FF, x, y, this.particleContainer);
+            const burbuja = new Burbuja(0x0000FF, x, y, this.particleContainer, this);
             this.burbujas.push(burbuja);
-            const burbujaR = new Burbuja(0x8A2BE2, x, y, this.particleContainer);
+            const burbujaR = new Burbuja(0x8A2BE2, x, y, this.particleContainer, this);
             this.burbujas.push(burbujaR);
         }
 
@@ -41,6 +45,7 @@ class Juego {
 
 
     }
+   
 
     actualizar(delta) {
         this.burbujas.forEach(burbuja => burbuja.updateBubbles(delta));
@@ -80,7 +85,7 @@ class Juego {
     
   
     agregarUI(){
-          //Prueba 
+          
           const texture = PIXI.Texture.from('./assets/componentes/f2.png');
           const sprite = new PIXI.Sprite(texture);
   
@@ -112,6 +117,15 @@ class Juego {
           this.app.stage.addChild(sonido);
     }
 
+    condicionDeVictoria(){
+        
+    }
+    condicionDeDerrota(){
+        
+    }
+
+    
+
 
 }
 
@@ -119,9 +133,8 @@ class Juego {
 class Burbuja {
     constructor(color, x, y, container, juego, contador) {
 
-        this.container = container;
-
-        this.juego = juego;
+       this.juego = juego; 
+       this.container = container; 
 
         this.contador = contador;
 
@@ -250,6 +263,8 @@ class Burbuja {
         bubble.buttonMode = true;
 
         bubble.on('pointerdown', () => {
+            this.juego.sonido.play(); 
+            
             this.eliminarBurbuja(bubble);
             this.animacion(bubble);
         });
@@ -366,10 +381,6 @@ class Contador {
     }
 }
 
-class Player { //Puntos- mouse- etc
 
-}
-
-// Crear una instancia del juego
 const juego = new Juego();
 
