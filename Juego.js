@@ -15,7 +15,7 @@ class Juego {
         this.particleContainer = new PIXI.Container();
         this.app.stage.addChild(this.particleContainer);
 
-        this.sonido = new Audio('./assets/pulse_sound.mp3');
+        this.sonido = new Audio('./Assets/pulse_sound.mp3');
 
         this.agregarCursor();
         this.agregarUI();
@@ -63,7 +63,7 @@ class Juego {
 
     agregarCursor() {
         
-        const textureM = PIXI.Texture.from('./assets/componentes/puntero1.png');
+        const textureM = PIXI.Texture.from('./Assets/componentes/puntero1.png');
         const mira = new PIXI.Sprite(textureM);
     
         mira.scale.set(0.7);
@@ -86,7 +86,7 @@ class Juego {
   
     agregarUI(){
           
-          const texture = PIXI.Texture.from('./assets/componentes/f2.png');
+          const texture = PIXI.Texture.from('./Assets/componentes/f2.png');
           const sprite = new PIXI.Sprite(texture);
   
           sprite.x = 80;
@@ -96,7 +96,7 @@ class Juego {
 
           this.app.stage.addChild(sprite);
           //
-          const textureT = PIXI.Texture.from('./assets/componentes/f1.png');
+          const textureT = PIXI.Texture.from('./Assets/componentes/f1.png');
           const timer = new PIXI.Sprite(textureT);
   
           timer.x = 400;
@@ -106,7 +106,7 @@ class Juego {
   
           this.app.stage.addChild(timer);
 
-          const textureS = PIXI.Texture.from('./assets/componentes/f2.png');
+          const textureS = PIXI.Texture.from('./Assets/componentes/f2.png');
           const sonido = new PIXI.Sprite(textureS);
   
           sonido.x = 725;
@@ -140,7 +140,7 @@ class Burbuja {
 
         this.color = color;
 
-        this.bubbleTexture = PIXI.Texture.from('./assets/b1.png');
+        this.bubbleTexture = PIXI.Texture.from('./Assets/b1.png');
 
         this.bubbles = [];
 
@@ -189,7 +189,7 @@ class Burbuja {
             },
 
             meta: {
-                image: './assets/explosion.png',
+                image: './Assets/explosion.png',
                 format: 'RGBA8888',
                 size: { w: 896, h: 198 },
                 scale: 1
