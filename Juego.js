@@ -13,6 +13,8 @@ class Juego {
        
         this.particleContainer = new PIXI.Container();
 
+        this.musica = new Audio('./Assets/thunderbird-game-over-9232.mp3');
+
         this.sonido = new Audio('./Assets/pulse_sound.mp3');
 
         this.inicio = new Inicio(this.app);
@@ -24,7 +26,9 @@ class Juego {
         this.agregarFondo();
        
         this.app.stage.addChild(this.particleContainer);
+        
         this.agregarUI();
+        this.agregarMusica();
 
         this.burbujas = [];
         this.burbujasR = [];
@@ -34,6 +38,8 @@ class Juego {
         this.cronometro.iniciar();
 
         this.contador = new Contador(this.app)
+        
+        this.agregarCursor();
 
         this.agregarBurbujasCada(100,500);
 
@@ -41,7 +47,7 @@ class Juego {
 
         this.agregarBurbujasCada(50,35000);
  
-        this.agregarCursor();
+        
        
         this.iniciarEventos();
 
@@ -134,6 +140,32 @@ class Juego {
 
         this.app.stage.addChild(sonido);
     }
+
+   agregarMusica(){
+        //icono
+        const textureI = PIXI.Texture.from('./Assets/componentes/audio.png');
+        const icono = new PIXI.Sprite(textureI);
+
+        icono.x = 725;
+        icono.y = 60;
+        icono.scale.set(0.05);
+        icono.anchor.set(0.5);
+
+        icono.interactive = true; 
+        icono.buttonMode = true;
+
+        this.app.stage.addChild(icono);
+        this.musica.play();
+
+        icono.on('pointerdown', () => {
+            console.log('Icono presionado');
+                this.musica.pause();
+        });        
+     
+    }
+
+
+
 
     condicionDeVictoria() {
         if (!this.cronometro.tiempoAgotado
@@ -540,7 +572,6 @@ class Inicio extends Evento {
         graphics.buttonMode = true; // Esto cambia el cursor cuando pasa sobre el objeto
 
         graphics.on('pointerdown', () => {
-            console.log("press");
             juego.juegoIniciado = true;
             this.quitar();
             juego.cargar();

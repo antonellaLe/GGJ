@@ -6,42 +6,6 @@
     <title>Bubbles</title>
     <script src="https://cdn.jsdelivr.net/npm/pixi.js/dist/browser/pixi.min.js"></script>
 </head>
-<style>
-    body {
-        position: relative; 
-        height: 100vh; 
-        margin: 0;
-    }
-    #start-audio {
-    position: absolute;
-    top: 45px;  
-    left: 705px;  
-    width: 32px;
-    height: 32px;
-    background-image: url('./Assets/componentes/audio.png');
-    background-size: cover;
-    background-color: transparent; 
-    border: none;
-    outline: none; 
-    padding: 0;  
-    margin: 0;  
-    cursor: pointer;
-}
-
-</style>
-<button id="start-audio"></button>
-<audio id="my-audio" src="./Assets/thunderbird-game-over-9232.mp3" preload="auto"></audio>
-
-<script>
-    const audio = document.getElementById('my-audio');
-    audio.play();
-    document.getElementById('start-audio').addEventListener('click', function() {
-    audio.pause(); 
-});
-
-    
-</script>
-
 
 <body>
 
