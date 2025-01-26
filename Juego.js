@@ -10,48 +10,14 @@ class Juego {
         });
 
         document.body.appendChild(this.app.view);
-        //this.agregarFondo();
-
-
+       
         this.particleContainer = new PIXI.Container();
-        //this.app.stage.addChild(this.particleContainer);
 
         this.sonido = new Audio('./Assets/pulse_sound.mp3');
-
-        /*this.agregarCursor();
-        this.agregarUI();
-
-        this.burbujas = [];
-        this.burbujasR = [];
-
-        this.cronometro = new Cronometro(this.app);
-
-        this.cronometro.iniciar();
-        
-
-        this.contador = new Contador(this.app)
-
-
-        // Burbujas
-        //Cambiar a que se generen x
-        for (let i = 0; i < 50; i++) {
-            const x = Math.random() * 800;
-            const y = Math.random() * 600;
-            const burbuja = new Burbuja(0x0000FF, x, y, this.particleContainer, this);
-            this.burbujas.push(burbuja);
-            const burbujaR = new Burbuja(0x8A2BE2, x, y, this.particleContainer, this);
-            this.burbujas.push(burbujaR);
-        }
-
-        this.iniciarEventos();*/
 
         this.inicio = new Inicio(this.app);
 
         this.inicio.mostrar();
-
-        // Actualizar en cada frame
-        //this.app.ticker.add((delta) => this.actualizar(delta));
-
 
     }
     cargar(){
@@ -71,7 +37,7 @@ class Juego {
 
         // Burbujas
         //Cambiar a que se generen x
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 100; i++) {
             const x = Math.random() * 800;
             const y = Math.random() * 600;
             const burbuja = new Burbuja(0x0000FF, x, y, this.particleContainer, this);
@@ -162,7 +128,7 @@ class Juego {
 
     condicionDeVictoria() {
         if (!this.cronometro.tiempoAgotado
-            && this.contador.puntaje === 3) {
+            && this.contador.puntaje === 200) {
             this.win.mostrar();
             this.app.ticker.stop();
         }
@@ -183,8 +149,6 @@ class Juego {
     }
    
 }
-
-
 
 class Burbuja {
     constructor(color, x, y, container, juego, contador) {
@@ -338,8 +302,6 @@ class Burbuja {
         if (index > -1) {
             this.bubbles.splice(index, 1);
         }
-
-
 
     }
 
