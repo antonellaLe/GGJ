@@ -8,12 +8,14 @@ class Juego {
 
         document.body.appendChild(this.app.view);
         this.agregarFondo();
-        this.agregarUI();
-        this.agregarCursor();
+        
 
         this.particleContainer = new PIXI.Container();
         this.app.stage.addChild(this.particleContainer);
 
+        this.agregarCursor();
+        this.agregarUI();
+        
         this.burbujas = [];
         this.burbujasR = [];
 
@@ -55,8 +57,28 @@ class Juego {
     }
 
     agregarCursor() {
-
+        
+        const textureM = PIXI.Texture.from('./assets/componentes/puntero1.png');
+        const mira = new PIXI.Sprite(textureM);
+    
+        mira.scale.set(0.7);
+        mira.anchor.set(0.5);
+        this.app.stage.addChild(mira);
+    
+        const initX = this.app.renderer.width / 2; 
+        const initY = this.app.renderer.height; 
+    
+        this.app.view.addEventListener('mousemove', (event) => {
+            const mouseX = event.clientX - this.app.view.offsetLeft;
+            const mouseY = event.clientY - this.app.view.offsetTop;
+    
+            mira.x = mouseX;
+            mira.y = mouseY;
+    
+        });
     }
+    
+  
     agregarUI(){
           //Prueba 
           const texture = PIXI.Texture.from('./assets/componentes/f2.png');
@@ -69,17 +91,26 @@ class Juego {
 
           this.app.stage.addChild(sprite);
           //
-          const textureT = PIXI.Texture.from('./assets/componentes/f5.png');
+          const textureT = PIXI.Texture.from('./assets/componentes/f1.png');
           const timer = new PIXI.Sprite(textureT);
   
           timer.x = 400;
           timer.y = 60;
-          timer.scale.set(0.8);
+          timer.scale.set(0.15);
           timer.anchor.set(0.5);
   
           this.app.stage.addChild(timer);
-    }
 
+          const textureS = PIXI.Texture.from('./assets/componentes/f2.png');
+          const sonido = new PIXI.Sprite(textureS);
+  
+          sonido.x = 725;
+          sonido.y = 60;
+          sonido.scale.set(0.1);
+          sonido.anchor.set(0.5);
+  
+          this.app.stage.addChild(sonido);
+    }
 
 
 }
@@ -282,13 +313,13 @@ class Cronometro {
     crearTexto() {
         this.texto = new PIXI.Text(`01:00`, {
             fontFamily: 'Arial',
-            fontSize: 30,
+            fontSize: 32,
             fill:  0x00CED1,
             align: 'center',
         });
         this.texto.anchor.set(0.5);
         this.texto.x = this.app.renderer.width / 2;
-        this.texto.y = 70;
+        this.texto.y = 60;
         this.app.stage.addChild(this.texto);
     }
 
@@ -324,7 +355,7 @@ class Contador {
             align: 'center',
         });
         this.texto.anchor.set(0.5);
-        this.texto.x = 80;
+        this.texto.x = 75;
         this.texto.y = 60;
         this.app.stage.addChild(this.texto);
     }
