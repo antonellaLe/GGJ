@@ -35,16 +35,12 @@ class Juego {
 
         this.contador = new Contador(this.app)
 
-        // Burbujas
-        //Cambiar a que se generen x
-        for (let i = 0; i < 100; i++) {
-            const x = Math.random() * 800;
-            const y = Math.random() * 600;
-            const burbuja = new Burbuja(0x0000FF, x, y, this.particleContainer, this);
-            this.burbujas.push(burbuja);
-            const burbujaR = new Burbuja(0x8A2BE2, x, y, this.particleContainer, this);
-            this.burbujas.push(burbujaR);
-        }
+        this.agregarBurbujasCada(100,500);
+
+        this.agregarBurbujasCada(50,25000);
+
+        this.agregarBurbujasCada(50,35000);
+ 
         this.agregarCursor();
        
         this.iniciarEventos();
@@ -52,6 +48,19 @@ class Juego {
         this.app.ticker.add((delta) => this.actualizar(delta));
     }
 
+    agregarBurbujasCada(cant, tiempo) {
+        setTimeout(() => {
+            for (let i = 0; i < cant; i++) {
+                const x = Math.random() * 800; 
+                const y = Math.random() * 600; 
+                const burbuja = new Burbuja(0x0000FF, x, y, this.particleContainer, this); 
+                this.burbujas.push(burbuja); 
+            }
+        }, tiempo);
+    }
+    
+    
+   
 
     actualizar(delta) {
         this.burbujas.forEach(burbuja => burbuja.updateBubbles(delta));
@@ -128,12 +137,13 @@ class Juego {
 
     condicionDeVictoria() {
         if (!this.cronometro.tiempoAgotado
-            && this.contador.puntaje === 200) {
+            && this.contador.puntaje === 200 ) {
             this.win.mostrar();
             this.app.ticker.stop();
         }
 
     }
+
     condicionDeDerrota() {
         if (this.cronometro.tiempoAgotado
             && this.contador.puntaje !== 100) {
