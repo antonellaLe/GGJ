@@ -2,6 +2,7 @@
 
 class Juego {
     constructor() {
+        this.juegoIniciado = false;
         this.app = new PIXI.Application({
             width: 800,
             height: 600,
@@ -10,7 +11,7 @@ class Juego {
 
         document.body.appendChild(this.app.view);
         this.agregarFondo();
-        
+
 
         this.particleContainer = new PIXI.Container();
         this.app.stage.addChild(this.particleContainer);
@@ -19,12 +20,15 @@ class Juego {
 
         this.agregarCursor();
         this.agregarUI();
-        
+
         this.burbujas = [];
         this.burbujasR = [];
 
         this.cronometro = new Cronometro(this.app);
-        this.cronometro.iniciar();
+
+        if(this.juegoIniciado === true){
+            this.cronometro.iniciar();
+        }
 
         this.contador = new Contador(this.app)
 
@@ -40,16 +44,25 @@ class Juego {
             this.burbujas.push(burbujaR);
         }
 
+        this.iniciarEventos();
+
+        this.inicio = new Inicio(this.app);
+
+        this.inicio.mostrar();
+
         // Actualizar en cada frame
         this.app.ticker.add((delta) => this.actualizar(delta));
 
 
     }
-   
+
 
     actualizar(delta) {
         this.burbujas.forEach(burbuja => burbuja.updateBubbles(delta));
         this.cronometro.actualizar(delta);
+        this.condicionDeVictoria(delta);
+        this.condicionDeDerrota(delta);
+
 
     }
 
@@ -62,70 +75,82 @@ class Juego {
     }
 
     agregarCursor() {
-        
+
         const textureM = PIXI.Texture.from('./Assets/componentes/puntero1.png');
         const mira = new PIXI.Sprite(textureM);
-    
+
         mira.scale.set(0.7);
         mira.anchor.set(0.5);
         this.app.stage.addChild(mira);
-    
-        const initX = this.app.renderer.width / 2; 
-        const initY = this.app.renderer.height; 
-    
+
+        const initX = this.app.renderer.width / 2;
+        const initY = this.app.renderer.height;
+
         this.app.view.addEventListener('mousemove', (event) => {
             const mouseX = event.clientX - this.app.view.offsetLeft;
             const mouseY = event.clientY - this.app.view.offsetTop;
-    
+
             mira.x = mouseX;
             mira.y = mouseY;
-    
+
         });
     }
-    
-  
-    agregarUI(){
-          
-          const texture = PIXI.Texture.from('./Assets/componentes/f2.png');
-          const sprite = new PIXI.Sprite(texture);
-  
-          sprite.x = 80;
-          sprite.y = 60;
-          sprite.scale.set(0.1);
-          sprite.anchor.set(0.5);
 
-          this.app.stage.addChild(sprite);
-          //
-          const textureT = PIXI.Texture.from('./Assets/componentes/f1.png');
-          const timer = new PIXI.Sprite(textureT);
-  
-          timer.x = 400;
-          timer.y = 60;
-          timer.scale.set(0.15);
-          timer.anchor.set(0.5);
-  
-          this.app.stage.addChild(timer);
 
-          const textureS = PIXI.Texture.from('./Assets/componentes/f2.png');
-          const sonido = new PIXI.Sprite(textureS);
-  
-          sonido.x = 725;
-          sonido.y = 60;
-          sonido.scale.set(0.1);
-          sonido.anchor.set(0.5);
-  
-          this.app.stage.addChild(sonido);
+    agregarUI() {
+
+        const texture = PIXI.Texture.from('./Assets/componentes/f2.png');
+        const sprite = new PIXI.Sprite(texture);
+
+        sprite.x = 80;
+        sprite.y = 60;
+        sprite.scale.set(0.1);
+        sprite.anchor.set(0.5);
+
+        this.app.stage.addChild(sprite);
+        //
+        const textureT = PIXI.Texture.from('./Assets/componentes/f1.png');
+        const timer = new PIXI.Sprite(textureT);
+
+        timer.x = 400;
+        timer.y = 60;
+        timer.scale.set(0.15);
+        timer.anchor.set(0.5);
+
+        this.app.stage.addChild(timer);
+
+        const textureS = PIXI.Texture.from('./Assets/componentes/f2.png');
+        const sonido = new PIXI.Sprite(textureS);
+
+        sonido.x = 725;
+        sonido.y = 60;
+        sonido.scale.set(0.1);
+        sonido.anchor.set(0.5);
+
+        this.app.stage.addChild(sonido);
     }
 
-    condicionDeVictoria(){
-        
+    condicionDeVictoria() {
+        if (!this.cronometro.tiempoAgotado
+            && this.contador.puntaje === 100) {
+            this.win.mostrar();
+            this.app.ticker.stop();
+        }
+
     }
-    condicionDeDerrota(){
-        
+    condicionDeDerrota() {
+        if (this.cronometro.tiempoAgotado
+            && this.contador.puntaje !== 100) {
+            this.gameOver.mostrar();
+            this.app.ticker.stop();
+        }
     }
 
-    
-
+    iniciarEventos() {
+        this.evento = new Evento(this.app);
+        this.win = new Win(this.app);
+        this.gameOver = new GameOver(this.app);
+    }
 
 }
 
@@ -133,8 +158,8 @@ class Juego {
 class Burbuja {
     constructor(color, x, y, container, juego, contador) {
 
-       this.juego = juego; 
-       this.container = container; 
+        this.juego = juego;
+        this.container = container;
 
         this.contador = contador;
 
@@ -263,8 +288,8 @@ class Burbuja {
         bubble.buttonMode = true;
 
         bubble.on('pointerdown', () => {
-            this.juego.sonido.play(); 
-            
+            this.juego.sonido.play();
+
             this.eliminarBurbuja(bubble);
             this.animacion(bubble);
         });
@@ -274,8 +299,6 @@ class Burbuja {
     eliminarBurbuja(bubble) {
         this.explosionEnCurso = true;
         //this.animacionExplosion();
-
-        //Puntaje no funciona
         juego.contador.actualizar();
         //console.log('suma uno')
 
@@ -291,6 +314,13 @@ class Burbuja {
 
 
     updateBubbles(delta) {
+        let margen = 30;
+        let limiteDerecho = 800 - margen;
+        let limiteIzquierdo = margen;
+        let limiteArriba = margen;
+        let limiteAbajo = 600 - margen;
+
+
         for (const bubble of this.bubbles) {
             bubble.x += bubble.vx * delta; // Movimiento horizontal
             bubble.y += bubble.vy * delta; // Movimiento vertical
@@ -298,21 +328,27 @@ class Burbuja {
             bubble.phase += 0.05 * delta; // Actualizar fase para oscilación
 
             // Bordes laterales
-            if (bubble.x < 0 || bubble.x > 800) {
+            if (bubble.x < limiteIzquierdo) {
                 bubble.vx *= -1;
+                bubble.x = limiteIzquierdo;
+            }
+            if (bubble.x > limiteDerecho) {
+                bubble.vx *= -1;
+                bubble.x = limiteDerecho;
             }
 
             // Bordes superior e inferior
-            if (bubble.y < 0) {
+            if (bubble.y < limiteArriba) {
                 bubble.vy *= -0.8;
-                bubble.y = 0;
+                bubble.y = limiteArriba;
             }
-            if (bubble.y > 600) {
+            if (bubble.y > limiteAbajo) {
                 bubble.vy *= -0.8;
-                bubble.y = 600;
+                bubble.y = limiteAbajo;
             }
         }
     }
+
 }
 
 class Cronometro {
@@ -321,15 +357,15 @@ class Cronometro {
         this.tiempoTotal = 60;
         this.texto = null;
         this.tiempoRestante = this.tiempoTotal;
-
         this.crearTexto();
+        this.tiempoAgotado = false
     }
 
     crearTexto() {
         this.texto = new PIXI.Text(`01:00`, {
             fontFamily: 'Arial',
             fontSize: 32,
-            fill:  0x00CED1,
+            fill: 0x00CED1,
             align: 'center',
         });
         this.texto.anchor.set(0.5);
@@ -346,11 +382,14 @@ class Cronometro {
             this.texto.text = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
         } else {
             this.texto.text = "¡ Tiempo!";
+            this.tiempoAgotado = true
         }
     }
 
     iniciar() {
-        this.tiempoRestante = this.tiempoTotal;
+        if (this.juegoIniciado === true) {
+            this.tiempoRestante = this.tiempoTotal;
+        }
     }
 }
 
@@ -379,7 +418,161 @@ class Contador {
         this.puntaje += 1;
         this.texto.text = this.puntaje.toString();
     }
+
 }
+
+class Evento {
+    constructor(app, juego) {
+        this.app = app;
+        this.juego = juego
+
+        this.mensajeMostrado = false;
+        this.eventoTexto = null;
+
+        this.textoPixi = null;
+
+    }
+
+    crearTexto(texto, color) {
+        const estiloTexto = new PIXI.TextStyle({
+            fontFamily: 'Arial',
+            fontSize: 80,
+            fill: color,
+            align: 'center'
+        });
+        const textoPixi = new PIXI.Text(texto, estiloTexto);
+
+        this.textoPixi = textoPixi;
+        return textoPixi;
+    }
+
+    mostrar() {
+        if (!this.mensajeMostrado) {
+            this.crearPlaca();
+
+            this.app.stage.addChild(this.textoPixi);
+
+            this.textoPixi.visible = true;
+
+            this.mensajeMostrado = true;
+
+            this.app.ticker.add(() => {
+                this.actualizarPosicion();
+                //this.actualizarPlaca();
+            })
+        }
+    }
+
+    quitar() {
+        this.app.stage.removeChild(this.textoPixi);
+        this.app.stage.removeChild(this.placa);
+        this.mensajeMostrado = false;
+    }
+
+    actualizarPosicion() {
+        this.textoPixi.anchor.set(0.5, 0.5);
+
+        this.textoPixi.x = this.app.view.width / 2;
+        this.textoPixi.y = this.app.view.height / 2;
+    }
+
+    crearPlaca() {
+        const textureP = PIXI.Texture.from('./Assets/componentes/f4.png');
+        const placa = new PIXI.Sprite(textureP);
+
+        placa.x = 350;
+        placa.y = 250;
+        placa.scale.set(2);
+        placa.anchor.set(0.5, 0.5);
+        //placa.alpha = 0;
+        //this.placa.zIndex
+
+        this.app.stage.addChild(placa);
+    }
+
+    actualizarPlaca() {
+        this.placa.x = this.textoPixi.x;
+        this.placa.y = this.textoPixi.y;
+
+
+    }
+}
+
+class Win extends Evento {
+    constructor(app, juego) {
+        super(app, juego);
+
+        this.crearTexto('WIN', 'aqua');
+    }
+}
+
+class GameOver extends Evento {
+    constructor(app, juego) {
+        super(app, juego);
+
+        this.crearTexto('GAME OVER', 'red');
+    }
+}
+
+class Inicio extends Evento {
+    constructor(app, juego) {
+        super(app, juego);
+
+        this.ini = PIXI.Texture.from("Assets/incio.png");
+        this.intro = new PIXI.Sprite(this.ini, this.app.view.width, this.app.view.height);
+        this.app.stage.addChild(this.intro);
+        this.botonStart();
+
+    }
+    botonStart() {
+        const graphics = new PIXI.Graphics();
+
+        graphics.beginFill(0xFF0000); // Relleno rojo (aunque sea invisible)
+        graphics.drawRect(192, 368, 377, 168);
+        graphics.endFill();
+        graphics.alpha = 0;  // Opacidad 0 (completamente invisible)
+
+        graphics.interactive = true;
+        graphics.buttonMode = true; // Esto cambia el cursor cuando pasa sobre el objeto
+
+        graphics.on('pointerdown', () => {
+            console.log("press");
+            juego.juegoIniciado = true;
+            this.quitar();
+           
+
+        });
+
+        /*if (!this.juegoIniciado) {
+            this.juegoIniciado = true;
+            this.quitar();
+
+        }*/
+
+
+        this.app.stage.addChild(graphics);
+
+    }
+
+    mostrar() {
+        if (!this.mensajeMostrado) {
+            this.mensajeMostrado = true;
+        }
+    }
+
+    quitar() {
+        this.app.stage.removeChild(this.intro);
+        this.mensajeMostrado = false;
+    }
+
+
+}
+/*function onClick(){
+    juego.iniciar();
+}*/
+
+
+
 
 
 const juego = new Juego();
