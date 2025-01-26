@@ -10,15 +10,15 @@ class Juego {
         });
 
         document.body.appendChild(this.app.view);
-        this.agregarFondo();
+        //this.agregarFondo();
 
 
         this.particleContainer = new PIXI.Container();
-        this.app.stage.addChild(this.particleContainer);
+        //this.app.stage.addChild(this.particleContainer);
 
         this.sonido = new Audio('./Assets/pulse_sound.mp3');
 
-        this.agregarCursor();
+        /*this.agregarCursor();
         this.agregarUI();
 
         this.burbujas = [];
@@ -26,9 +26,8 @@ class Juego {
 
         this.cronometro = new Cronometro(this.app);
 
-        if(this.juegoIniciado === true){
-            this.cronometro.iniciar();
-        }
+        this.cronometro.iniciar();
+        
 
         this.contador = new Contador(this.app)
 
@@ -44,16 +43,47 @@ class Juego {
             this.burbujas.push(burbujaR);
         }
 
-        this.iniciarEventos();
+        this.iniciarEventos();*/
 
         this.inicio = new Inicio(this.app);
 
         this.inicio.mostrar();
 
         // Actualizar en cada frame
+        //this.app.ticker.add((delta) => this.actualizar(delta));
+
+
+    }
+    cargar(){
+        this.agregarFondo();
+       
+        this.app.stage.addChild(this.particleContainer);
+        this.agregarUI();
+
+        this.burbujas = [];
+        this.burbujasR = [];
+
+        this.cronometro = new Cronometro(this.app);
+
+        this.cronometro.iniciar();
+
+        this.contador = new Contador(this.app)
+
+        // Burbujas
+        //Cambiar a que se generen x
+        for (let i = 0; i < 50; i++) {
+            const x = Math.random() * 800;
+            const y = Math.random() * 600;
+            const burbuja = new Burbuja(0x0000FF, x, y, this.particleContainer, this);
+            this.burbujas.push(burbuja);
+            const burbujaR = new Burbuja(0x8A2BE2, x, y, this.particleContainer, this);
+            this.burbujas.push(burbujaR);
+        }
+        this.agregarCursor();
+       
+        this.iniciarEventos();
+
         this.app.ticker.add((delta) => this.actualizar(delta));
-
-
     }
 
 
@@ -69,7 +99,7 @@ class Juego {
     agregarFondo() {
         this.contenedorFondo = new PIXI.Container();
         this.textura = PIXI.Texture.from("Assets/fondo2.jpg");
-        this.fondoSprite = new PIXI.TilingSprite(this.textura, this.app.view.width, this.app.view.height);
+        this.fondoSprite = new PIXI.Sprite(this.textura, this.app.view.width, this.app.view.height);
         this.contenedorFondo.addChild(this.fondoSprite);
         this.app.stage.addChild(this.contenedorFondo);
     }
@@ -132,7 +162,7 @@ class Juego {
 
     condicionDeVictoria() {
         if (!this.cronometro.tiempoAgotado
-            && this.contador.puntaje === 100) {
+            && this.contador.puntaje === 3) {
             this.win.mostrar();
             this.app.ticker.stop();
         }
@@ -147,12 +177,13 @@ class Juego {
     }
 
     iniciarEventos() {
-        this.evento = new Evento(this.app);
-        this.win = new Win(this.app);
-        this.gameOver = new GameOver(this.app);
+        this.evento = new Evento(this.app,this.juego);
+        this.win = new Win(this.app, this.juego);
+        this.gameOver = new GameOver(this.app, this.juego);
     }
-
+   
 }
+
 
 
 class Burbuja {
@@ -430,6 +461,7 @@ class Evento {
         this.eventoTexto = null;
 
         this.textoPixi = null;
+       
 
     }
 
@@ -448,7 +480,7 @@ class Evento {
 
     mostrar() {
         if (!this.mensajeMostrado) {
-            this.crearPlaca();
+            
 
             this.app.stage.addChild(this.textoPixi);
 
@@ -458,7 +490,7 @@ class Evento {
 
             this.app.ticker.add(() => {
                 this.actualizarPosicion();
-                //this.actualizarPlaca();
+                this.crearPlaca();
             })
         }
     }
@@ -478,31 +510,31 @@ class Evento {
 
     crearPlaca() {
         const textureP = PIXI.Texture.from('./Assets/componentes/f4.png');
-        const placa = new PIXI.Sprite(textureP);
+        this.placa = new PIXI.Sprite(textureP);
 
-        placa.x = 350;
-        placa.y = 250;
-        placa.scale.set(2);
-        placa.anchor.set(0.5, 0.5);
-        //placa.alpha = 0;
+        this.placa.x = 350;
+        this.placa.y = 250;
+        this.placa.scale.set(2);
+        this.placa.anchor.set(0.5, 0.5);
+
+        //this.placa.alpha = 0.0001;
         //this.placa.zIndex
 
-        this.app.stage.addChild(placa);
+        this.app.stage.addChild(this.placa);
     }
 
-    actualizarPlaca() {
-        this.placa.x = this.textoPixi.x;
-        this.placa.y = this.textoPixi.y;
+    /*actualizarPlaca() {
+        this.placa.alpha = this.mensajeMostrado ? 1 : 0;
 
-
-    }
+    }*/
 }
 
 class Win extends Evento {
     constructor(app, juego) {
         super(app, juego);
-
+        
         this.crearTexto('WIN', 'aqua');
+        
     }
 }
 
@@ -521,7 +553,7 @@ class Inicio extends Evento {
         this.ini = PIXI.Texture.from("Assets/incio.png");
         this.intro = new PIXI.Sprite(this.ini, this.app.view.width, this.app.view.height);
         this.app.stage.addChild(this.intro);
-        this.botonStart();
+        this.boton = this.botonStart();
 
     }
     botonStart() {
@@ -539,15 +571,10 @@ class Inicio extends Evento {
             console.log("press");
             juego.juegoIniciado = true;
             this.quitar();
-           
+            juego.cargar();
+            graphics.off('pointerdown'); 
 
         });
-
-        /*if (!this.juegoIniciado) {
-            this.juegoIniciado = true;
-            this.quitar();
-
-        }*/
 
 
         this.app.stage.addChild(graphics);
@@ -562,18 +589,12 @@ class Inicio extends Evento {
 
     quitar() {
         this.app.stage.removeChild(this.intro);
+        //this.app.stage.removeChild(this.botonStart.graphics);
         this.mensajeMostrado = false;
     }
 
 
 }
-/*function onClick(){
-    juego.iniciar();
-}*/
-
-
-
-
 
 const juego = new Juego();
 
