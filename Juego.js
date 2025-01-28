@@ -22,6 +22,7 @@ class Juego {
         this.inicio.mostrar();
 
     }
+
     cargar(){
         this.agregarFondo();
        
@@ -47,8 +48,6 @@ class Juego {
 
         this.agregarBurbujasCada(50,35000);
  
-        
-       
         this.iniciarEventos();
 
         this.app.ticker.add((delta) => this.actualizar(delta));
@@ -65,16 +64,12 @@ class Juego {
         }, tiempo);
     }
     
-    
-   
 
     actualizar(delta) {
         this.burbujas.forEach(burbuja => burbuja.updateBubbles(delta));
         this.cronometro.actualizar(delta);
         this.condicionDeVictoria(delta);
         this.condicionDeDerrota(delta);
-
-
     }
 
     agregarFondo() {
@@ -86,7 +81,7 @@ class Juego {
     }
 
     agregarCursor() {
-
+        
         const textureM = PIXI.Texture.from('./Assets/componentes/puntero1.png');
         const mira = new PIXI.Sprite(textureM);
 
@@ -109,40 +104,33 @@ class Juego {
 
 
     agregarUI() {
+        this.agregarImagen('./Assets/componentes/f2.png', 75, 60, 0.1)
+  
+        this.agregarImagen('./Assets/componentes/f1.png', 400, 60, 0.15)
+  
+        this.agregarImagen('./Assets/componentes/f2.png', 725, 60, 0.1)
 
-        const texture = PIXI.Texture.from('./Assets/componentes/f2.png');
-        const sprite = new PIXI.Sprite(texture);
+        //this.agregarImagen('./Assets/componentes/f4.png', 90, 550, 0.1)
 
-        sprite.x = 80;
-        sprite.y = 60;
-        sprite.scale.set(0.1);
-        sprite.anchor.set(0.5);
+        //this.agregarImagen('./Assets/componentes/f5.png', 710, 550, 0.1)
 
-        this.app.stage.addChild(sprite);
-        //
-        const textureT = PIXI.Texture.from('./Assets/componentes/f1.png');
-        const timer = new PIXI.Sprite(textureT);
-
-        timer.x = 400;
-        timer.y = 60;
-        timer.scale.set(0.15);
-        timer.anchor.set(0.5);
-
-        this.app.stage.addChild(timer);
-
-        const textureS = PIXI.Texture.from('./Assets/componentes/f2.png');
-        const sonido = new PIXI.Sprite(textureS);
-
-        sonido.x = 725;
-        sonido.y = 60;
-        sonido.scale.set(0.1);
-        sonido.anchor.set(0.5);
-
-        this.app.stage.addChild(sonido);
     }
 
+    agregarImagen(ruta, x, y, scaleN) {
+        const texture = PIXI.Texture.from(ruta);
+        const sprite = new PIXI.Sprite(texture); 
+    
+        sprite.x = x;
+        sprite.y = y;
+        sprite.scale.set(scaleN);
+        sprite.anchor.set(0.5);
+    
+        this.app.stage.addChild(sprite);
+    }
+    
+
    agregarMusica(){
-        //icono
+        //icono (cambiar icono)
         const textureI = PIXI.Texture.from('./Assets/componentes/audio.png');
         const icono = new PIXI.Sprite(textureI);
 
@@ -156,22 +144,28 @@ class Juego {
 
         this.app.stage.addChild(icono);
         this.musica.play();
+        this.musica.volume = 0.2;
+
+        this.sonando = true;
 
         icono.on('pointerdown', () => {
-            console.log('Icono presionado');
+            if(this.sonando){
                 this.musica.pause();
+                this.sonando = false;
+            }else if (!this.sonando){
+                this.musica.play();
+                this.sonando = true;
+            }
         });        
      
     }
-
-
-
 
     condicionDeVictoria() {
         if (!this.cronometro.tiempoAgotado
             && this.contador.puntaje === 200 ) {
             this.win.mostrar();
             this.app.ticker.stop();
+            //this.reiniciar();
         }
 
     }
@@ -181,6 +175,7 @@ class Juego {
             && this.contador.puntaje !== 100) {
             this.gameOver.mostrar();
             this.app.ticker.stop();
+            //this.reiniciar();
         }
     }
 
@@ -188,6 +183,13 @@ class Juego {
         this.evento = new Evento(this.app,this.juego);
         this.win = new Win(this.app, this.juego);
         this.gameOver = new GameOver(this.app, this.juego);
+    }
+
+    reiniciar(){
+        //this.burbujas.quitarBurbujas();
+        this.cronometro.reiniciarTiempo();
+        this.cargar();
+        this.evento.quitar();
     }
    
 }
@@ -203,6 +205,7 @@ class Burbuja {
         this.color = color;
 
         this.bubbleTexture = PIXI.Texture.from('./Assets/b1.png');
+
 
         this.bubbles = [];
 
@@ -277,9 +280,13 @@ class Burbuja {
 
         const globalPosition = bubble.getGlobalPosition();
 
+        anim.x = globalPosition.x;
+        anim.y = globalPosition.y;
 
-        anim.x = globalPosition.x - bubble.width / 2;
-        anim.y = globalPosition.y - bubble.height / 2;
+
+        anim.anchor.set(0.5);
+
+        anim.rotation = Math.PI / Math.random();        
 
         anim.scale = bubble.scale;
         anim.alpha = bubble.alpha;
@@ -304,7 +311,7 @@ class Burbuja {
         // Velocidades iniciales aleatorias
         const angle = Math.random() * Math.PI * 2; // Ángulo aleatorio
         bubble.vx = Math.cos(angle) * (Math.random() * 0.5 + 1); // Movimiento horizontal
-        bubble.vy = -Math.abs(Math.sin(angle) * (Math.random() * 2 + 1)); // Movimiento hacia arriba
+        bubble.vy = -Math.abs(Math.sin(angle) * (Math.random() * 1 + 1)); // Movimiento hacia arriba
 
         // Oscilación independiente
         bubble.oscillation = Math.random() * 2; // Amplitud de oscilación
@@ -313,7 +320,6 @@ class Burbuja {
         // Transparencia y escala aleatorias
         bubble.alpha = Math.random() * 0.5 + 0.5;
         bubble.scale.set(Math.random() * 0.25 + 0.5);
-
 
         // Agregar al contenedor
         bubble.zIndex = 10;
@@ -337,7 +343,6 @@ class Burbuja {
         this.explosionEnCurso = true;
         //this.animacionExplosion();
         juego.contador.actualizar();
-        //console.log('suma uno')
 
         this.container.removeChild(bubble);
         const index = this.bubbles.indexOf(bubble); // Eliminar del array
@@ -346,7 +351,6 @@ class Burbuja {
         }
 
     }
-
 
     updateBubbles(delta) {
         let margen = 30;
@@ -384,6 +388,14 @@ class Burbuja {
         }
     }
 
+    quitarBurbujas(){
+        this.burbujas.forEach((burbuja) => {
+            burbuja.sprite.destroy(); 
+        });
+        this.burbujas = []; 
+
+    }
+
 }
 
 class Cronometro {
@@ -394,6 +406,9 @@ class Cronometro {
         this.tiempoRestante = this.tiempoTotal;
         this.crearTexto();
         this.tiempoAgotado = false
+    }
+    reiniciarTiempo(){
+        this.tiempoTotal = 60;
     }
 
     crearTexto() {
@@ -444,7 +459,7 @@ class Contador {
             align: 'center',
         });
         this.texto.anchor.set(0.5);
-        this.texto.x = 75;
+        this.texto.x = 70;
         this.texto.y = 60;
         this.app.stage.addChild(this.texto);
     }
@@ -563,7 +578,7 @@ class Inicio extends Evento {
     botonStart() {
         const graphics = new PIXI.Graphics();
 
-        graphics.beginFill(0xFF0000); // Relleno rojo (aunque sea invisible)
+        graphics.beginFill(0xFF0000); 
         graphics.drawRect(192, 368, 377, 168);
         graphics.endFill();
         graphics.alpha = 0;  // Opacidad 0 (completamente invisible)
